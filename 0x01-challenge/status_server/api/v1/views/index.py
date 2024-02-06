@@ -1,13 +1,23 @@
 #!/usr/bin/python3
-""" Index view
 """
-from flask import jsonify
+Web server 
+"""
+from api.v1.views.index import app_views  # Adjust import path
+from flask import Flask, jsonify, make_response
 
-from api.v1.views import app_views
+app = Flask(__name__)
+app.register_blueprint(app_views)
 
+@app.errorhandler(404)
+def not_found(error):
+    """ json 404 page """
+    return make_response(jsonify({"error": "Not found"}), 404)
 
-@app_views.route('/status', methods=['GET'], strict_slashes=False)
-def status():
-    """ Status of the web server
-    """
+# Define route for /api/v1/status
+@app.route('/api/v1/status')
+def get_status():
     return jsonify({"status": "OK"})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
